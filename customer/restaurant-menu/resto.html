@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurants</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+
+    <link rel="stylesheet" href="./resto.css" />
+    <link rel="stylesheet" href="../layouts/nav.css" />
+    <link rel="stylesheet" href="../layouts/footer.css" />
+    <script>
+      fetch("../../landingfooter.html")
+        .then((response) => response.text())
+        .then((footerHTML) => {
+          $("#footer-container").html(footerHTML);
+        });
+    </script>
+    <script src="../../config.js"></script>
+  </head>
+  <body>
+    <div id="navbar-container"></div>
+
+    <div class="container">
+      <h2 class="text-center mb-4">Available Restaurants</h2>
+      <div class="restaurant-list" id="restaurant-list"></div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="itemModal"
+      tabindex="-1"
+      aria-labelledby="itemModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="itemModalLabel"></h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <img
+              id="item-image"
+              class="img-fluid rounded mb-3"
+              alt="Restaurant"
+            />
+            <p id="item-description"></p>
+            <ul id="item-ingredients"></ul>
+            <div class="d-flex justify-content-between align-items-center">
+              <span id="item-rating" class="text-primary fw-bold fs-5"></span>
+              <button id="view-menu" class="btn view-menu text-white">
+                View Menu
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        const API_URL = feast.API_URL;
+        const keyToCheck = 'loggedin';
+        const login = localStorage.getItem(keyToCheck) !== null
+        const userRole = localStorage.getItem("userRole");
+        if (login && userRole !== "customer") {
+          localStorage.setItem("errmsg", "User is not a customer.");
+          window.location.href = "../layouts/404error.html";
+        }
+        const $restaurantListContainer = $("#restaurant-list");
+        const itemModal = new bootstrap.Modal(
+          document.getElementById("itemModal")
+        );
+        const $modalTitle = $("#itemModalLabel");
+        const $modalImage = $("#item-image");
+        const $modalDescription = $("#item-description");
+        const $modalIngredients = $("#item-ingredients");
+        const $modalRating = $("#item-rating");
+        const $viewMenuButton = $("#view-menu");
+
+        const userId = localStorage.getItem("userId");
+
+        const staticImageUrls = [
+            "../restaurant-menu/res-images/rt1.jpg",
+            "../restaurant-menu/res-images/rt2.jpg",
+            "../restaurant-menu/res-images/rt3.png",
+            "../restaurant-menu/res-images/rt4.png",
+            "../restaurant-menu/res-images/rt5.jpg",
+            "../restaurant-menu/res-images/rt6.jpg",
+            "../restaurant-menu/res-images/rt7.png",
+          ];
+
+
+        fetch("../layouts/nav.html")
+          .then((response) => response.text())
+          .then((navbarHTML) => {
+            $("#navbar-container").html(navbarHTML);
+            const $logoutLink = $("#logout-link");
+
+            if ($logoutLink.length) {
+              $logoutLink.on("click", function (e) {
+                e.preventDefault();
+                localStorage.removeItem("userId");
+                localStorage.removeItem("userRole");
+                window.location.replace("../../login/login.html");
+              });
+            } else {
+              console.warn("#logout-link not found in loaded navbar!");
+            }
+          })
+          .catch((error) => {
+            console.error("Failed to load navbar:", error);
+          });
+
+        function renderRestaurants(restaurants) {
+
+          $restaurantListContainer.empty();
+          restaurants.forEach((restaurant) => {
+            const randomImage =
+              staticImageUrls[
+                Math.floor(Math.random() * staticImageUrls.length)
+              ];
+            const $card = $("<div>").addClass("restaurant-card").html(`
+                        <img src="${randomImage}" alt="${restaurant.restaurantName}">
+                        <div class="restaurant-info">
+                            <h4>${restaurant.restaurantName}</h4>
+                            <div class="restaurant-meta">
+                                <span>${restaurant.cuisine}</span>
+                            </div>
+                            <p class="mb-1">Address: ${restaurant.address}</p>
+                            <button class="view-details view-menu " data-restaurant-id="${restaurant.restaurantId}" data-restaurant-name="${restaurant.restaurantName}">View Details</button>
+                        </div>
+                    `);
+            $restaurantListContainer.append($card);
+          });
+
+
+          $(".view-details").each(function () {
+            $(this).on("click", function () {
+              const restaurantId = $(this).data("restaurant-id");
+              const restaurantName = $(this).data("restaurant-name");
+              localStorage.setItem("restaurantName", restaurantName);
+              console.log(restaurantName);
+              const selectedRestaurant = restaurants.find(
+                (r) => r.restaurantId === parseInt(restaurantId)
+              );
+              if (selectedRestaurant) {
+                openRestaurantDetailsModal(selectedRestaurant);
+              }
+            });
+          });
+        }
+
+        function openRestaurantDetailsModal(restaurant) {
+          const randomImage =
+              staticImageUrls[
+                Math.floor(Math.random() * staticImageUrls.length)
+              ];          $modalTitle.text(restaurant.restaurantName);
+          $modalImage
+            .attr("src", randomImage)
+            .attr("alt", restaurant.restaurantName);
+          $modalDescription.text(
+            `Cuisine: ${restaurant.cuisine} | Address: ${restaurant.address}`
+          );
+          const restaurantId = restaurant.restaurantId;
+          const restaurantName = localStorage.getItem("restaurantName");
+          console.log(restaurantName);
+          $viewMenuButton.on("click", () => {
+            localStorage.setItem("restaurantId", restaurantId);
+            localStorage.setItem("restaurantName", restaurantName);
+            window.location.href = `../products/product.html`;
+            itemModal.hide();
+          });
+
+          itemModal.show();
+        }
+
+        function fetchAndRenderRestaurants() {
+          fetch(`${API_URL}/customer/restaurants`)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+            })
+            .then((response) => {
+              const restaurants = response.details;
+              renderRestaurants(restaurants);
+            })
+            .catch((error) => {
+              console.error("Error fetching restaurant data:", error);
+              $restaurantListContainer.html(
+                "<p class='error-message'>Error loading restaurants.</p>"
+              );
+            });
+        }
+
+        fetchAndRenderRestaurants();
+      });
+    </script>
+
+    <div id="footer-container"></div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="./img/logo-dark.png" type="image/x-icon" />
+    <title>Restaurant Management</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      fetch("./layouts/footer.html")
+        .then((response) => response.text())
+        .then((footerHTML) => {
+          $("#footer-container").html(footerHTML);
+        });
+    </script>
+    <script src="../config.js"></script>
+
+    <link rel="stylesheet" href="./layouts/nav.css" />
+    <link rel="stylesheet" href="./layouts/footer.css" />
+    <link rel="stylesheet" href="owner.css" />
+  </head>
+  <body>
+    <div id="navbar-container"></div>
+
+    <div class="owner-hero text-center my-5">
+      <div class="hero">
+        <h1 class="fw-bold">Manage Your Restaurant</h1>
+        <p class="">Efficiently oversee your menu and customer orders.</p>
+        <a href="#content" class="btn dash-btn" id="dash-btn">Go to Content</a>
+      </div>
+    </div>
+
+    <div class="owner-content-section py-5" id="content">
+      <div class="container">
+        <div id="restaurant-management-section" style="display: none">
+          <h2 class="mb-4">Quick Actions</h2>
+          <p class="lead text-center mb-5">
+            Easily access and manage essential restaurant functions.
+          </p>
+          <div class="owner-features-grid"></div>
+        </div>
+        <div id="restaurant-creation-section" style="display: none">
+          <div class="mt-5">
+            <h3>Create Your Restaurant</h3>
+            <form id="restaurant-form">
+              <div class="form-group">
+                <label for="restaurant-name">Restaurant Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="restaurant-name"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="restaurant-address">Address</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="restaurant-address"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="cuisine">Cuisine</label>
+                <input type="text" class="form-control" id="cuisine" required />
+              </div>
+              <div class="form-group">
+                <label for="owner-name">Owner Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="owner-name"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">
+                Create Restaurant
+              </button>
+            </form>
+          </div>
+        </div>
+        <div id="loading-indicator" class="text-center">
+          <p>Loading...</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="footer-container"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        const API_URL = feast.API_URL;
+        const userRole = localStorage.getItem("userRole");
+        if (userRole !== "restaurant") {
+          localStorage.setItem("errmsg", "Customer is not a restaurant owner.");
+          window.location.href = "./layouts/404error.html";
+        }
+        fetch("./layouts/nav.html")
+          .then((response) => response.text())
+          .then((navbarHTML) => {
+            $("#navbar-container").html(navbarHTML);
+            const $logoutLink = $("#logout-link");
+    
+            if ($logoutLink.length) {
+              $logoutLink.on("click", function (e) {
+                e.preventDefault();
+                localStorage.removeItem("userId");
+                localStorage.removeItem("restaurantId");
+                window.location.replace("../login/login.html");
+              });
+            } else {
+              console.warn("#logout-link not found in loaded navbar!");
+            }
+          })
+          .catch((error) => {
+            console.error("Failed to load navbar:", error);
+          });
+    
+        const userId = localStorage.getItem("userId");
+        const restaurantManagementSection = $("#restaurant-management-section");
+        const restaurantCreationSection = $("#restaurant-creation-section");
+        const loadingIndicator = $("#loading-indicator");
+    
+        function fetchRestaurantData(userId) {
+          $.ajax({
+            url: `${API_URL}/restaurant/check?userId=${userId}`,
+            method: "GET",
+            success: function (response) {
+              loadingIndicator.hide();
+              if (response.details.hasRestaurant) {
+                // User has a restaurant, show management section
+                restaurantManagementSection.show();
+                restaurantCreationSection.hide();
+                $.ajax({
+                  url: `${API_URL}/restaurant/restaurantId?userId=${userId}`,
+                  method: "GET",
+                  success: function (restaurantIdResponse) {
+                    console.log(
+                      "Restaurant ID fetched successfully:",
+                      restaurantIdResponse.details
+                    );
+                    loadManagementDashboard(userId, restaurantIdResponse.details);
+                    localStorage.setItem("restaurantId", restaurantIdResponse.details);
+                  },
+                  error: function (jqXHR, textStatus, errorThrown) {
+                    console.error(
+                      "Error fetching restaurant ID:",
+                      textStatus,
+                      errorThrown
+                    );
+                    alert(
+                      "Failed to fetch restaurant ID.  Some features may not work."
+                    );
+                    loadManagementDashboard(userId, null);
+                  },
+                });
+              } else {
+                restaurantCreationSection.show();
+                restaurantManagementSection.hide();
+              }
+            },
+            error: function (xhr, status, error) {
+              loadingIndicator.hide();
+              console.log(
+                "Error checking restaurant status: " + xhr.responseText
+              );
+              const errmsg = status + " Error checking restaurant status";
+              localStorage.setItem("errmsg", errmsg);
+              window.location.href = `./layouts/404error.html`;
+            },
+          });
+        }
+    
+        function loadManagementDashboard(userId, restaurantId) {
+          const dashboardItems = [
+            {
+              icon: "fas fa-user",
+              title: "Manage Profile",
+              description:
+                "Update your restaurant details and contact information.",
+              link: `../restaurant/profile.html`,
+            },
+            {
+              icon: "fas fa-utensils",
+              title: "Manage Menu",
+              description: "Add, edit, or remove food items and categories.",
+              link: `./res-items.html`,
+            },
+            {
+              icon: "fas fa-list-alt",
+              title: "View Orders",
+              description: "Track and manage incoming customer orders.",
+              link: `./res-orders.html`,
+            },
+          ];
+          $(".owner-features-grid").empty();
+          dashboardItems.forEach((item) => {
+            const card = `
+            <div class="owner-feature-card">
+              <div class="owner-feature-icon">
+                <i class="${item.icon}"></i>
+              </div>
+              <h5>${item.title}</h5>
+              <p>${item.description}</p>
+              <a href="${item.link}" class="mt-3">View Details</a>
+            </div>
+            `;
+            $(".owner-features-grid").append(card);
+          });
+        }
+    
+        if (userId) {
+          fetchRestaurantData(userId);
+        } else {
+          const errmsg = "Missing User Information! Please login again.";
+          localStorage.setItem("errmsg", errmsg);
+          window.location.href = `./layouts/404error.html`;
+        }
+    
+        //  Restaurant creation form submission
+        $("#restaurant-form").submit(function (event) {
+          event.preventDefault();
+    
+          const restaurantName = $("#restaurant-name").val();
+          const restaurantAddress = $("#restaurant-address").val();
+          const cuisine = $("#cuisine").val();
+          const ownerName = $("#owner-name").val();
+    
+          if (!restaurantName || !restaurantAddress || !cuisine || !ownerName) {
+            alert("Please fill in all restaurant details.");
+            return;
+          }
+    
+          $.ajax({
+            url: `${API_URL}/restaurant/create`,
+            method: "POST",
+            data: {
+              userId: userId,
+              restaurantName: restaurantName,
+              restaurantAddress: restaurantAddress,
+              cuisine: cuisine,
+              ownerName: ownerName,
+            },
+            success: function (response) {
+                alert("Restaurant created successfully!");
+              fetchRestaurantData(userId);
+              const restaurantCreationSection = $("#restaurant-creation-section");
+              const restaurantManagementSection = $("#restaurant-management-section");
+              restaurantCreationSection.hide();
+              restaurantManagementSection.show();
+            },
+            error: function (xhr, status, error) {
+              alert("Error creating restaurant: " + xhr.responseText);
+              const errmsg = status + " Error creating restaurant";
+              localStorage.setItem("errmsg", errmsg);
+              window.location.href = `./layouts/404error.html`;
+            },
+          });
+        });
+      });
+    </script>
+    
+  </body>
+</html>

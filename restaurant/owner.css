@@ -1,0 +1,196 @@
+
+:root {
+  --primary: #ffc107;
+  --secondary: #03071e;
+  --tertiary: #ffc108;
+  --quaternary: #ffba08;
+  --text-light: #ffffff;
+  --text-dark: #333;
+  --box-shadow: rgba(0, 0, 0, 0.1);
+  --feature-icon-size: 4rem;
+}
+
+.owner-hero {
+  padding: 100px 20px;
+  text-align: center;
+  background: url("img/pexels-photo-941861.jpeg") center/cover no-repeat;
+  color: var(--text-light);
+
+}
+
+.owner-hero h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.owner-hero p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.owner-hero .dash-btn {
+  background-color: var(--primary);
+  color: var(--secondary);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.owner-hero .dash-btn:hover {
+    border: 1px solid var(--primary);
+  background-color: var(--secondary);
+    color: var(--text-light); 
+}
+
+.owner-features-section {
+  padding: 60px 20px;
+  background-color: #f8f9fa; 
+}
+
+.owner-features-section h2 {
+  color: var(--secondary);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.owner-features-section .lead {
+  color: #6c757d;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.owner-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.owner-feature-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: var(--box-shadow);
+  padding: 20px;
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e0e0e0;
+  transition: transform 0.3s ease-in-out;
+}
+
+.owner-feature-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.owner-feature-icon {
+  width: var(--feature-icon-size);
+  height: var(--feature-icon-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 193, 7, 0.15); 
+  color: var(--primary);
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.owner-feature-card h5 {
+  color: var(--secondary);
+  margin-bottom: 0.5rem;
+}
+
+.owner-feature-card p {
+  color: #6c757d;
+}
+
+.owner-feature-card a {
+  background-color: var(--primary);
+  color: var(--secondary);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+  display: inline-block; 
+}
+
+.owner-feature-card a:hover {
+  background-color: var(--secondary);
+  color: var(--text-light);
+}
+
+.owner-section-title {
+  text-align: center;
+  color: var(--secondary);
+  margin-top: 4rem;
+  margin-bottom: 2rem;
+}
+
+.owner-menu-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 3rem;
+}
+
+.owner-menu-list button {
+  background-color: #f8f9fa;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.owner-menu-list button.active {
+  background-color: var(--primary);
+  color: var(--secondary);
+  border-color: var(--primary);
+}
+
+.owner-restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.owner-restaurant-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: var(--box-shadow);
+  padding: 20px;
+}
+
+.owner-restaurant-card h3 {
+  color: var(--secondary);
+  margin-bottom: 0.5rem;
+}
+
+.owner-restaurant-card p {
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.owner-restaurant-card .btn-outline-primary {
+  color: var(--primary);
+  border-color: var(--primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+}
+
+.owner-restaurant-card .btn-outline-primary:hover {
+  background-color: var(--primary);
+  color: var(--secondary);
+}

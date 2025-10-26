@@ -1,0 +1,418 @@
+:root {
+  --primary: #ffc107;
+  --secondary: #03071e;
+  --tertiary: #ffc108;
+  --quaternary: #ffba08;
+  --text-light: #ffffff;
+  --text-dark: #333;
+  --box-shadow: rgba(0, 0, 0, 0.1);
+}
+
+/*========================================================
+          Sitewide Styles
+========================================================*/
+
+.profile-card{
+  margin-top: 20px;
+}
+
+.header {
+  text-align: center;
+  background: linear-gradient(to right, var(--secondary), var(--quaternary));
+  color: var(--text-light);
+  padding: 20px;
+  border-radius: 0 0 20px 20px;
+}
+
+.brand-logo{
+  width: 25%;
+}
+
+.toggler-btn{
+  background-color: var(--primary);
+}
+
+.header .icon {
+  font-size: 40px;
+  margin-bottom: 5px;
+}
+
+.nav-link{
+  color: var(--primary);
+  margin: 0 25px;
+}
+
+.nav-link:hover, .nav-link:active, .nav-link:focus {
+  color: var(--text-light);
+}
+
+#logout-icon{
+  margin-top: 6px;
+}
+
+/*========================================================
+          Container Styles
+========================================================*/
+.box-main {
+  margin: 40px auto;
+  margin-top: 90px;
+  width: 80%;
+  background: white;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  border-radius: 18px;
+  font-family: 'Lato', sans-serif;
+  text-align: center;
+  height: 100%;
+  overflow: hidden;
+}
+
+/*========================================================
+          Header Styles
+========================================================*/
+h1 {
+  color: var(--primary);
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+/*========================================================
+          Profile Section
+========================================================*/
+#profileSection {
+  text-align: left;
+  margin-top: 30px;
+  padding: 20px;
+}
+
+#profileSection p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin: 10px 0;
+  color: #333;
+}
+
+#editProfileBtn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#editProfileBtn:hover {
+  background-color: var(--secondary);
+}
+
+/*========================================================
+          Edit Profile Section
+========================================================*/
+#editProfileSection {
+  text-align: left;
+  margin-top: 10px;
+  padding: 20px;
+  display: none;
+}
+
+#editProfileSection label {
+  font-size: 16px;
+  color: #555;
+  display: block;
+  margin-bottom: 5px;
+}
+
+#editProfileSection input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+}
+
+#editProfileSection input:focus {
+  outline: none;
+  border: 2px solid var(--primary);
+}
+
+#editProfileSection input:active {
+  outline: none;
+  border: 2px solid var(--primary);
+}
+
+
+#saveProfileBtn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#saveProfileBtn:hover {
+  background-color: var(--secondary);
+}
+
+/*========================================================
+          Responsive Design
+========================================================*/
+@media (max-width: 768px) {
+  .box-main {
+    width: 90%;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  #editProfileSection input {
+    font-size: 14px;
+  }
+}
+
+.logout-btn {
+  float: inline-end;
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: var(--secondary);
+}
+
+
+
+/*========================================================
+          Footer Styles
+ ========================================================= */
+
+ footer ul {
+  margin: 0px;
+  padding: 0px;
+}
+.footer-section {
+  background: #000;
+  position: relative;
+  padding: 20px;
+}
+.footer-cta {
+  border-bottom: 1px solid #373636;
+  padding: 20px 0;
+}
+
+
+.single-cta i {
+  color: var(--primary);
+  font-size: 23px;
+  float: left;
+  margin-top: 8px;
+}
+.cta-text {
+  padding-left: 15px;
+  display: inline-block;
+}
+.cta-text h4 {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.cta-text span {
+  color: #757575;
+  font-size: 15px;
+}
+.footer-content {
+  position: relative;
+  z-index: 2;
+}
+.footer-pattern img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 330px;
+  background-size: cover;
+  background-position: 100% 100%;
+}
+.footer-logo {
+  margin-bottom: 30px;
+}
+.footer-logo img {
+  max-width: 200px;
+}
+.footer-text p {
+  margin-bottom: 14px;
+  font-size: 14px;
+  color: #7e7e7e;
+  line-height: 28px;
+}
+.footer-social-icon span {
+  color: #fff;
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: "Poppins", sans-serif;
+  margin-bottom: 20px;
+}
+.footer-social-icon a {
+  color: #fff;
+  font-size: 16px;
+  margin-right: 15px;
+}
+.footer-social-icon i {
+  height: 40px;
+  width: 40px;
+  text-align: center;
+  line-height: 38px;
+  border-radius: 50%;
+ 
+}
+.facebook-bg {
+  background: #3b5998;
+}
+.twitter-bg {
+  background: #55acee;
+}
+.google-bg {
+  background: var(--primary);
+}
+.footer-widget-heading h3 {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 40px;
+  position: relative;
+}
+.footer-widget-heading h3::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -15px;
+  height: 2px;
+  width: 50px;
+  background: var(--primary);
+}
+.footer-widget ul li {
+  display: inline-block;
+  float: left;
+  width: 50%;
+  margin-bottom: 12px;
+  text-decoration: none;
+}
+.footer-widget ul li a:hover {
+  color: var(--primary);
+}
+.footer-widget ul li a {
+  color: #878787;
+  text-transform: capitalize;
+}
+.subscribe-form {
+  position: relative;
+  overflow: hidden;
+}
+.subscribe-form input {
+  width: 100%;
+  padding: 14px 28px;
+  background: #000000;
+  border: 1px solid var(--primary);
+  color: #fff;
+}
+.subscribe-form button {
+  position: absolute;
+  right: 0;
+  background: var(--primary);
+  padding: 13px 20px;
+  border: 1px solid var(--primary);
+  top: 0;
+}
+.subscribe-form button i {
+  color: #fff;
+  font-size: 23px;
+  transform: rotate(-6deg);
+}
+.copyright-area {
+  background: #000;
+  padding: 25px 0;
+}
+.copyright-text p {
+  margin: 0;
+  font-size: 14px;
+  color: #878787;
+}
+copyright-text p a {
+  color: var(--primary);
+}
+.footer-menu li {
+  display: inline-block;
+  margin-left: 20px;
+}
+.footer-menu li:hover a {
+  color: var(--primary);
+}
+.footer-menu li a {
+  font-size: 14px;
+  color: #878787;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .footer-widget ul li {
+      width: 100%;
+  }
+  .footer-social-icon span {
+      text-align: center;
+  }
+  .footer-social-icon a {
+      display: inline-block;
+      margin-bottom: 10px;
+  }
+  .footer-logo img {
+      max-width: 150px;
+  }
+  .footer-text p {
+      font-size: 12px;
+  }
+  .footer-widget-heading h3 {
+      font-size: 18px;
+  }
+  .cta-text h4 {
+      font-size: 18px;
+  }
+  .cta-text span {
+      font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-social-icon span {
+      font-size: 18px;
+  }
+  .footer-social-icon a {
+      font-size: 14px;
+  }
+  .footer-logo img {
+      max-width: 120px;
+  }
+  .footer-text p {
+      font-size: 10px;
+  }
+  .footer-widget-heading h3 {
+      font-size: 16px;
+  }
+  .cta-text h4 {
+      font-size: 16px;
+  }
+  .cta-text span {
+      font-size: 12px;
+  }
+}

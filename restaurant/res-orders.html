@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Past Orders - Menu Management</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+
+    <link rel="stylesheet" href="res-orders.css" />
+    <link rel="stylesheet" href="./layouts/nav.css" />
+    <link rel="stylesheet" href="./layouts/footer.css" />
+    <script>
+      fetch("./layouts/footer.html")
+        .then((response) => response.text())
+        .then((footerHTML) => {
+          document.getElementById("footer-container").innerHTML = footerHTML;
+        });
+    </script>
+    <script src="../config.js"></script>
+  </head>
+  <body>
+    <div id="navbar-container"></div>
+
+    <div class="container mt-5">
+      <h2 class="mb-4 text-secondary">Your Orders</h2>
+
+      <div class="mb-3">
+        <label for="orderStatusFilter" class="form-label"
+          >Filter by Status:</label
+        >
+        <select class="drop-down" id="orderStatusFilter">
+          <option id="filter-opt" value="">All Orders</option>
+          <option id="filter-opt" value="Accepted">Accepted</option>
+          <option id="filter-opt" value="Preparing">Preparing</option>
+          <option id="filter-opt" value="Cooked">Cooked</option>
+          <option id="filter-opt" value="Out for Delivery">
+            Out for Delivery
+          </option>
+          <option id="filter-opt" value="Delivered">Delivered</option>
+        </select>
+      </div>
+
+      <div class="accordion" id="pastOrdersAccordion"></div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        const API_URL = feast.API_URL;
+        const userRole = localStorage.getItem("userRole");
+        if (userRole !== "restaurant") {
+          localStorage.setItem("errmsg", "Customer is not a restaurant owner.");
+          window.location.href = "./layouts/404error.html";
+        }
+        fetch("./layouts/nav.html")
+          .then((response) => response.text())
+          .then((navbarHTML) => {
+            $("#navbar-container").html(navbarHTML);
+            const $logoutLink = $("#logout-link");
+
+            if ($logoutLink.length) {
+              $logoutLink.on("click", function (e) {
+                e.preventDefault();
+                localStorage.removeItem("userId");
+                localStorage.removeItem("restaurantId");
+                localStorage.removeItem("userRole");
+                window.location.replace("../login/login.html");
+              });
+            } else {
+              console.warn("#logout-link not found in loaded navbar!");
+            }
+          })
+          .catch((error) => {
+            console.error("Failed to load navbar:", error);
+          });
+
+        const pastOrdersAccordion = $("#pastOrdersAccordion");
+        const orderStatusFilter = $("#orderStatusFilter");
+
+        const restaurantId = localStorage.getItem("restaurantId");
+
+        if (!restaurantId) {
+          const errmsg = "Missing Restaurant Information! Please login again.";
+          localStorage.setItem("errmsg", errmsg);
+          window.location.href = `./layouts/404error.html`;
+          return;
+        }
+
+        function fetchPastOrders(restaurantId) {
+          $.ajax({
+            url: `${API_URL}/restaurant/order/${restaurantId}/statuses`,
+            method: "GET",
+            success: function (response) {
+              console.log("Fetched orders:", response);
+              fetchCartItems(
+                response.details,
+                response.details[0].orderDTO.user.userId
+              ); // Pass the fetched orders to fetchCartItems
+            },
+            error: function (xhr, status, error) {
+              console.error("Error fetching orders:", error);
+              const errmsg = status + "! Error fetching orders ";
+              localStorage.setItem("errmsg", errmsg);
+              window.location.href = `./layouts/404error.html`;
+            },
+          });
+        }
+
+        function fetchCartItems(orderData, userId) {
+          const orderId = localStorage.getItem("orderId");
+
+          if (!userId) {
+            console.error("userId is missing.");
+            const errmsg =
+              "Missing User Id of Customer ordered! Please try again.";
+            localStorage.setItem("errmsg", errmsg);
+            window.location.href = `../layouts/404error.html`;
+            return;
+          }
+          $.ajax({
+            url: `${API_URL}/customer/cart?userId=${userId}`,
+            method: "GET",
+            dataType: "json",
+            success: function (response) {
+              cartDataGlobal = response.details;
+              localStorage.setItem(
+                "cartItems",
+                JSON.stringify(response.details)
+              );
+              console.log("Cart items data:", response.details);
+              renderOrders(orderData, response.details); // Pass the fetched orders to renderOrders
+            },
+            error: function (xhr, status, error) {
+              console.error("Error ordered items:", error);
+              const errmsg =
+                "Status Code '" +
+                xhr.status +
+                "' : Error fetching ordered items.";
+              localStorage.setItem("errmsg", errmsg);
+              window.location.href = `./layouts/404error.html`;
+              emptyCartMessage.hide();
+              orderSummary.hide();
+            },
+          });
+        }
+
+        const statusOptions = [
+          "Pending",
+          "Accepted",
+          "Preparing",
+          "Cooked",
+          "Out for Delivery",
+          "Delivered",
+          "Cancelled",
+        ];
+
+        function renderOrders(orders, cartData) {
+          pastOrdersAccordion.empty();
+          if (orders.length === 0) {
+            pastOrdersAccordion.html(
+              "<div class='text-center alert alert-info'>No orders found for this restaurant.</div>"
+            );
+            return;
+          }
+
+          let orderHTML = "";
+          orders.forEach((order) => {
+            console.log("ordered customer id", order.orderDTO.user.userId);
+            const orderId = order.orderDTO.orderId;
+            const orderStatus = order.status;
+            const orderDate = new Date(order.orderedAt).toLocaleDateString();
+            const restaurantName = order.restaurantDTO.restaurantName;
+            const deliveryAddress = order.orderDTO.user.address;
+            const currentOrderId = order.orderDTO.orderId;
+
+            let itemsHTML = "";
+    if (cartData && cartData.length > 0) {
+      cartData.forEach(cartItem => {
+        itemsHTML += `
+          <li class="d-flex justify-content-between align-items-center mb-2">
+            <span class="text-dark">
+              <i class="fas fa-utensil-spoon mr-2 text-danger"></i>
+              ${cartItem.foodItem.foodName} x ${cartItem.quantity} 
+            </span>
+            <span class="font-weight-bold text-dark">₹${cartItem.totalPrice}</span>
+          </li>
+        `;
+      });
+    } else {
+      itemsHTML = "<li class='text-muted'>No items found in cart.</li>";
+    }
+
+            let statusBadgeClass = "";
+            switch (orderStatus.toLowerCase()) {
+              case "pending":
+                statusBadgeClass = "badge-warning";
+                break;
+              case "accepted":
+                statusBadgeClass = "badge-info";
+                break;
+              case "preparing":
+                statusBadgeClass = "badge-primary";
+                break;
+              case "cooked":
+                statusBadgeClass = "badge-secondary";
+                break;
+              case "out for delivery":
+                statusBadgeClass = "badge-orange";
+                break;
+              case "delivered":
+                statusBadgeClass = "badge-success";
+                break;
+              case "cancelled":
+                statusBadgeClass = "badge-danger";
+                break;
+              default:
+                statusBadgeClass = "badge-secondary";
+            }
+
+            orderHTML += `
+      <div class="card order-item mb-3 shadow-sm rounded">
+        <div class="card-header bg-white py-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="mb-1 font-weight-bold text-secondary">
+                Order # ${orderId}
+              </h6>
+              <small class="text-muted">Placed on ${orderDate}</small>
+            </div>
+            <span class="badge badge-pill ${statusBadgeClass} py-2 px-3 font-weight-normal order-status-badge">
+              ${orderStatus}
+            </span>
+          </div>
+        </div>
+        <div class="card-body py-3">
+          <h6 class="card-subtitle mb-2 text-muted font-weight-bold">
+            Restaurant: <span class="text-dark">${restaurantName}</span>
+          </h6>
+          <ul class="list-unstyled mb-3">
+            ${itemsHTML}
+          </ul>
+          <p class="card-text text-muted small mb-1">
+            <i class="fas fa-map-marker-alt mr-2 text-primary"></i>
+            Delivery Address: ${deliveryAddress}
+          </p>
+          <div class="mt-3">
+            <select class="form-select form-select-sm update-order-status-dropdown" data-order-id="${currentOrderId}">
+              <option value="" disabled selected>Update Status</option>
+              ${statusOptions
+                .map((option) => `<option value="${option}">${option}</option>`)
+                .join("")}
+            </select>
+            <button class="btn btn-sm btn-success update-status-button mt-2" data-order-id="${currentOrderId}">
+              <i class="fas fa-check-circle mr-1"></i>Update Status
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+          });
+
+          pastOrdersAccordion.html(orderHTML);
+
+          $(".update-status-button").on("click", function () {
+            const orderIdToUpdate = $(this).data("order-id");
+            const selectedStatus = $(this)
+              .siblings(".update-order-status-dropdown")
+              .val();
+
+            if (!selectedStatus) {
+              alert("Please select a status before updating.");
+              return;
+            }
+
+            console.log(
+              "Updating order",
+              orderIdToUpdate,
+              "to status:",
+              selectedStatus,
+              "for restaurantId:",
+              restaurantId
+            );
+            updateOrderStatus(orderIdToUpdate, selectedStatus, restaurantId); // Pass restaurantId
+          });
+        }
+
+        function updateOrderStatus(orderId, newStatus, restaurantId) {
+          $.ajax({
+            url: `${API_URL}/restaurant/order`,
+            method: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify({
+              order: { orderId: orderId },
+              status: newStatus,
+              restaurant: { restaurantId: restaurantId },
+            }),
+            success: function (response) {
+              console.log("Order status updated:", response);
+              fetchPastOrders(restaurantId);
+            },
+            error: function (xhr, status, error) {
+              console.error("Error updating order status:", error);
+              const errmsg = status + "! Error updating order status ";
+              localStorage.setItem("errmsg", errmsg);
+              // window.location.href = `./layouts/404error.html`;
+              alert("Failed to update order status.  Please try again.");
+            },
+          });
+        }
+
+        orderStatusFilter.on("change", function () {
+          var selectedStatus = $(this).val().toLowerCase();
+          $(".order-item").each(function () {
+            var orderStatus = $(this)
+              .find(".order-status-badge")
+              .text()
+              .toLowerCase();
+            if (selectedStatus === "" || orderStatus.includes(selectedStatus)) {
+              $(this).show();
+            } else {
+              $(this).hide();
+            }
+          });
+        });
+
+        function updatePageItems(orderItemsArray) {
+          let items = "";
+          console.log("orderItemsArray:", orderItemsArray);
+          if (Array.isArray(orderItemsArray)) {
+            orderItemsArray.forEach((item) => {
+              if (item) {
+                // Make sure item exists
+                console.log("item:", item);
+                items += item.foodItem.foodName + " x " + item.quantity + ", ";
+              }
+            });
+          }
+
+          return items.slice(0, -2); // Remove the trailing ", "
+        }
+        fetchPastOrders(restaurantId);
+      });
+    </script>
+
+    <div id="footer-container"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+  <style>
+    .badge-orange {
+      background-color: #fd7e14;
+      color: #fff;
+    }
+  </style>
+</html>

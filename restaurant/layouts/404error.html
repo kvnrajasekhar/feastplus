@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OOPS!</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700");
+      .main-wrapper {
+        font-size: 15vmin;
+        background-color: #ffffff;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column; /* To stack the signboard and text */
+      }
+
+      .signboard-wrapper {
+        width: 75vmin;
+        height: 55vmin;
+        margin: 20px;
+        position: relative;
+        flex-shrink: 0;
+        transform-origin: center 2.5vmin;
+        animation: 1000ms init forwards, 1000ms init-sign-move ease-out 1000ms,
+          3000ms sign-move 2000ms infinite;
+      }
+
+      .signboard-wrapper .signboard {
+        color: #ffffff;
+        font-family: "Open Sans", sans-serif;
+        font-weight: bold;
+        background-color: #ffc107;
+        width: 100%;
+        height: 35vmin;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        bottom: 0;
+        border-radius: 4vmin;
+        text-shadow: 0 -0.015em #ffc107;
+        box-shadow: 0 2vmin 4vmin 1vmin rgba(107, 107, 107, 0.8);
+      }
+
+      .signboard-wrapper .string {
+        width: 30vmin;
+        height: 30vmin;
+        border: solid 0.9vmin #ffc107;
+        border-bottom: none;
+        border-right: none;
+        position: absolute;
+        left: 50%;
+        transform-origin: top left;
+        transform: rotate(45deg);
+      }
+
+      .signboard-wrapper .pin {
+        width: 5vmin;
+        height: 5vmin;
+        position: absolute;
+        border-radius: 50%;
+      }
+
+      .signboard-wrapper .pin.pin1 {
+        background-color: #9f9f9f;
+        top: 0;
+        left: calc(50% - 2.5vmin);
+      }
+
+      .signboard-wrapper .pin.pin2,
+      .signboard-wrapper .pin.pin3 {
+        background-color: #9f9f9f;
+        top: 21.5vmin;
+      }
+
+      .signboard-wrapper .pin.pin2 {
+        left: 13vmin;
+      }
+
+      .signboard-wrapper .pin.pin3 {
+        right: 13vmin;
+      }
+
+      @keyframes init {
+        0% {
+          transform: scale(0);
+        }
+        40% {
+          transform: scale(1.1);
+        }
+        60% {
+          transform: scale(0.9);
+        }
+        80% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes init-sign-move {
+        100% {
+          transform: rotate(3deg);
+        }
+      }
+
+      @keyframes sign-move {
+        0% {
+          transform: rotate(3deg);
+        }
+        50% {
+          transform: rotate(-3deg);
+        }
+        100% {
+          transform: rotate(3deg);
+        }
+      }
+
+      .error-message {
+        font-family: sans-serif;
+        font-size: 4vmin;
+        color: #555;
+        margin-top: 3vmin;
+        text-align: center;
+        position: "fixed";
+        top: "70%";
+        left: "50%";
+        transform: "translate(-50%, -50%)";
+        z-index: "1000";
+        width: "80%";
+        max-width: "400px";
+        text-align: "center";
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <div class="signboard-wrapper">
+        <div class="signboard">OOPS</div>
+        <div class="string"></div>
+        <div class="pin pin1"></div>
+        <div class="pin pin2"></div>
+        <div class="pin pin3"></div>
+      </div>
+      <div
+        class="error-message alert alert-warning"
+        id="error-message-div"
+      ></div>
+      <script>
+        // window.addEventListener("beforeunload", () => {
+        //   // Clear the local storage
+        //   localStorage.removeItem("errmsg");
+        // });
+        const errorMessage = localStorage.getItem("errmsg");
+        $("#error-message-div").text(errorMessage);
+      </script>
+    </div>
+  </body>
+</html>
+
+
+
