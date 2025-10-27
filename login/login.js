@@ -48,7 +48,7 @@ $(document).ready(function () {
         if (userRole === "restaurant") {
           window.location.href = "../restaurant/owner.html"; 
         } else if (userRole === "customer") {
-          window.location.href = "./index.html";
+          window.location.href = "../index.html";
         } else {
           console.error("Unknown user role:", userRole);
           alert("Unknown user role. Please contact support.");
