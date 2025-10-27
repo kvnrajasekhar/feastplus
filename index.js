@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
   const API_URL = feast.API_URL;
   const userRole = localStorage.getItem("userRole");
   const keyToCheck = 'loggedin';
@@ -46,6 +45,7 @@ $(document).ready(function () {
   function displayItems(filter) {
     $itemsList.empty();
     console.log("displayItems called with filter: [" + filter + "]");
+      console.log("At display Items URL:", API_URL)
 
     $.ajax({
       url: `${API_URL}/customer/food-items`,
@@ -160,12 +160,15 @@ $(document).ready(function () {
           "Status Code '" + xhr.status + "' : Error fetching food items!";
         localStorage.setItem("errmsg", errmsg);
         // PATH CHANGE: Adjusted to be relative to the root index.html
-        window.location.href = "./layouts/404error.html";
+        //window.location.href = "./customer/layouts/404error.html";
       },
     });
   }
 
   function getResDetails(foodId) {
+    const API_URL = feast.API_URL;
+console.log("At ResDetails URL:", API_URL)
+
     return new Promise(function (resolve, reject) {
       $.ajax({
         url: `${API_URL}/customer/food-items/${foodId}/restaurant`, 
@@ -213,6 +216,8 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   function fetchAndRenderRestaurants() {
+      const API_URL = feast.API_URL;
+    console.log("At fetchANd Render Restaurants URL:", API_URL)
     $.ajax({
       url: `${API_URL}/customer/restaurants`,
       method: "GET",

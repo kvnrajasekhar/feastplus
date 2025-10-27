@@ -43,6 +43,7 @@ $(document).ready(function () {
       window.location.href = `../layouts/404error.html`;
       return;
     }
+    const API_URL = feast.API_URL;
     $.ajax({
       url: `${API_URL}/customer/cart?userId=${userId}`,
       method: "GET",
@@ -160,6 +161,7 @@ $(document).ready(function () {
   }
 
   function getUserDetails(userId) {
+    const API_URL = feast.API_URL;
     const url = `${API_URL}/customer/profile/${userId}`;
 
     $.ajax({
@@ -194,6 +196,7 @@ $(document).ready(function () {
   }
 
   function sendOrderUpdate(orderDetails) {
+    const API_URL = feast.API_URL;
     $.ajax({
       url: `${API_URL}/customer/order/status`,
       method: "POST",

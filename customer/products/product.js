@@ -45,6 +45,7 @@ $(document).ready(function () {
 
   function fetchUserCart(callback) {
     const userId = localStorage.getItem("userId");
+    const API_URL = feast.API_URL;
     $.ajax({
       url: `${API_URL}/customer/cart?userId=${userId}`,
       method: "GET",
@@ -89,6 +90,7 @@ $(document).ready(function () {
       window.location.href = `../layouts/404error.html`;
       return;
     }
+    const API_URL = feast.API_URL;
     const apiUrl = `${API_URL}/customer/restaurants/${restaurantId}/food-items`;
 
     $.ajax({
@@ -290,6 +292,7 @@ console.log("Restaurant Name:", restaurantName);
 
   function addItemToOrder(foodId, buttonElement, totalPrice, userId) {
     const restaurantId = localStorage.getItem("restaurantId");
+    const API_URL = feast.API_URL;
 
     $.ajax({
       url: `${API_URL}/customer/order`,
@@ -330,6 +333,7 @@ console.log("Restaurant Name:", restaurantName);
   }
 
   function clearCart(userId, callback) {
+    const API_URL = feast.API_URL;
     $.ajax({
       url: `${API_URL}/customer/cart/clear?userId=${userId}`,
       method: "DELETE",
@@ -353,6 +357,7 @@ console.log("Restaurant Name:", restaurantName);
 
   function getResId(foodId) {
     return new Promise(function (resolve, reject) {
+      const API_URL = feast.API_URL;
       $.ajax({
         url: `${API_URL}/customer/food-items/${foodId}/restaurant`,
         method: "GET",

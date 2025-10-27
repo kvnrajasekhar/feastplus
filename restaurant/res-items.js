@@ -76,6 +76,7 @@ $(document).ready(function () {
   }
 
   function fetchFoodItems() {
+    const API_URL = feast.API_URL;
       const apiUrl = `${API_URL}/restaurant/${restaurantId}/food-items`;
       $.ajax({
           url: apiUrl,
@@ -119,6 +120,7 @@ $(document).ready(function () {
           productIdToRemove &&
           confirm("Are you sure you want to remove this item?")
       ) {
+        const API_URL = feast.API_URL;
           $.ajax({
               url: `${API_URL}/restaurant/food-item/${productIdToRemove}`,
               method: "DELETE",
@@ -254,7 +256,7 @@ $(document).ready(function () {
               restaurantId: restaurantId,
           },
       };
-
+      const API_URL = feast.API_URL;
       const addItemUrl = `${API_URL}/restaurant/addItem`;
       const updateItemUrl = `${API_URL}/restaurant/food-item/${currentEditItemId}`;
       const method = currentEditItemId ? "PUT" : "POST"; 

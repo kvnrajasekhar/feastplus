@@ -1,5 +1,4 @@
 $(document).ready(function () {
-  const API_URL = feast.API_URL;
   const userRole = localStorage.getItem("userRole");
   if (userRole !== "restaurant") {
     localStorage.setItem("errmsg", "Customer is not a restaurant owner.");
@@ -58,6 +57,7 @@ $(document).ready(function () {
 });
 
 function fetchUserProfile(userId) {
+  const API_URL = feast.API_URL;
   const url = `${API_URL}/customer/profile/${userId}`;
 
   $.ajax({
@@ -115,6 +115,7 @@ function populateEditForm(data) {
 }
 
 function saveUserProfile(userId) {
+  const API_URL = feast.API_URL;
   const url = `${API_URL}/customer/profile/edit/${userId}`;
   const updatedData = {
     userName: $("#editName").val(),

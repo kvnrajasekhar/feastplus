@@ -25,13 +25,16 @@ $(document).ready(function () {
       email: email,
       password: password,
     };
-
+      const API_URL = feast.API_URL;
       $.ajax({
       type: "POST",
       url: `${API_URL}/login`,
       contentType: "application/json", 
       data: JSON.stringify(data), 
-      dataType: "json", 
+      dataType: "json",
+      dataType: "json",
+      crossDomain: true,
+      xhrFields: { withCredentials: true }, 
 
       success: function (response) {
         console.log("Login successful:", response);
@@ -45,7 +48,7 @@ $(document).ready(function () {
         if (userRole === "restaurant") {
           window.location.href = "../restaurant/owner.html"; 
         } else if (userRole === "customer") {
-          window.location.href = "../customer/feast_plus/index.html";
+          window.location.href = "./index.html";
         } else {
           console.error("Unknown user role:", userRole);
           alert("Unknown user role. Please contact support.");

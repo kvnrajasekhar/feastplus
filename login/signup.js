@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  const API_URL = feast.API_URL;
+
   $("#dropDown").click(function () {
     $(".drop-down").toggleClass("drop-down--active");
   });
@@ -52,7 +52,7 @@ $("#signupForm").submit(function (event) {
   };
 
   console.log("User object:", user);
-
+    const API_URL = feast.API_URL;
   $.ajax({
     type: "POST",
     url: `${API_URL}/signup`,
@@ -62,7 +62,7 @@ $("#signupForm").submit(function (event) {
     success: function (response) {
       console.log("Signup successful:", response);
       alert("Signup successful! Please login.");
-      window.location.href = "login.html"; 
+      window.location.href = "./login.html"; 
     },
     error: function (xhr, status, error) {
       console.error("Signup error:", xhr.responseText);

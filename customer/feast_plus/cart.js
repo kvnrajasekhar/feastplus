@@ -184,7 +184,7 @@ $(document).ready(function () {
       "New quantity:",
       newQuantity
     );
-
+    const API_URL = feast.API_URL;
     if (newQuantity >= 1) {
       $.ajax({
         url: `${API_URL}/customer/cart/${orderId}?userId=${userId}`,

@@ -198,6 +198,7 @@
         }
 
         function fetchAndRenderRestaurants() {
+          const API_URL = feast.API_URL;
           fetch(`${API_URL}/customer/restaurants`)
             .then((response) => {
               if (!response.ok) {

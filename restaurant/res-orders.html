@@ -102,6 +102,7 @@
         }
 
         function fetchPastOrders(restaurantId) {
+          const API_URL = feast.API_URL;
           $.ajax({
             url: `${API_URL}/restaurant/order/${restaurantId}/statuses`,
             method: "GET",
@@ -132,6 +133,7 @@
             window.location.href = `../layouts/404error.html`;
             return;
           }
+          const API_URL = feast.API_URL;
           $.ajax({
             url: `${API_URL}/customer/cart?userId=${userId}`,
             method: "GET",
@@ -300,6 +302,7 @@
         }
 
         function updateOrderStatus(orderId, newStatus, restaurantId) {
+          const API_URL = feast.API_URL;
           $.ajax({
             url: `${API_URL}/restaurant/order`,
             method: "PUT",

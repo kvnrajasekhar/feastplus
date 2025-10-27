@@ -46,6 +46,7 @@ $(document).ready(function () {
 
   function fetchOrderStatus(orderId, cartData) {
     console.log(API_URL);
+    const API_URL = feast.API_URL;
     $.ajax({
       url: `${API_URL}/restaurant/order/${orderId}/status`,
       method: "GET",
@@ -73,6 +74,7 @@ $(document).ready(function () {
       window.location.href = `../layouts/404error.html`;
       return;
     }
+    const API_URL = feast.API_URL;
     $.ajax({
       url: `${API_URL}/customer/cart?userId=${userId}`,
       method: "GET",
